@@ -75,14 +75,13 @@ const MapComponent: React.FC = () => {
       }
     }
   }, [dta, rNuber])
-  console.log(dta[rNuber])
-  let obj = { aqui: '' }
+  let obj = ''
   if (dta[rNuber]?.languages) {
     obj = dta[rNuber].languages
   }
 
   const arr = obj
-    ? Object.keys(obj).map((key) => ({ key, value: obj[key] }))
+    ? Object.keys(obj).map((key: string) => ({ key, value: obj[key] }))
     : []
   return (
     <>
@@ -108,12 +107,28 @@ const MapComponent: React.FC = () => {
       </p>
       <div>
         <p>horaros(UTC): </p>
-        {dta[rNuber]?.timezones.map((time, index) => {
+        {dta[rNuber]?.timezones.map((time: string, index: string) => {
           return <p key={index}>*{time}</p>
         })}
       </div>
-      <img src={dta[rNuber]?.flags?.png} alt="Flag" />
-      <img src={dta[rNuber]?.coatOfArms?.png} alt="Coat of Arms" />
+      {/* <Image
+        src={dta[rNuber]?.flags?.png}
+        alt="Flag"
+        width={300}
+        height={300}
+      />
+      <Image
+        src={dta[rNuber]?.coatOfArms?.png}
+        alt="Coat of Arms"
+        width={300}
+        height={300}
+      /> */}
+      <img className="img" src={dta[rNuber]?.flags?.png} alt="Flag" />
+      <img
+        className="img"
+        src={dta[rNuber]?.coatOfArms?.png}
+        alt="Coat of Arms"
+      />
     </>
   )
 }
