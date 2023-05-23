@@ -1,39 +1,81 @@
 'use client'
 import axios from 'axios'
-import { useEffect, useState } from 'react'
+import Map from 'ol/Map'
+import Overlay from 'ol/Overlay'
+import View from 'ol/View'
+import TileLayer from 'ol/layer/Tile'
+import { useGeographic } from 'ol/proj'
+import OSM from 'ol/source/OSM'
+import { useEffect, useRef, useState } from 'react'
 
-export default function Home() {
+const MapComponent: React.FC = () => {
+  const mapRef = useRef<HTMLDivElement>(null)
+  const overlayRef = useRef<HTMLDivElement>(null)
   const [dta, setDta] = useState<any | null>({})
   const [rNuber, setRNuber] = useState<Number | any>(0)
+
   const fetchData = async () => {
     try {
       const response = await axios.get('https://restcountries.com/v3.1/all')
       const data = response.data
-      // Faça o processamento dos dados recebidos da API
-      console.log(data)
-      console.log(data.map((item: any) => item.region))
-
       setDta(data)
-      console.log(dta)
     } catch (error) {
-      // Trate os erros de requisição
       console.error(error)
     }
   }
+
   useEffect(() => {
     fetchData()
     setRNuber(getRandomNumber())
   }, [])
 
   function getRandomNumber() {
-    // Gera um número aleatório entre 0 e 1
     const random = Math.random()
-
-    // Calcula o número aleatório dentro do intervalo especificado
     const randomNumber = Math.floor(random * (200 - 1 + 1)) + 1
-
     return randomNumber
   }
+
+  useEffect(() => {
+    useGeographic()
+
+    if (mapRef.current) {
+      const lat = dta[rNuber]?.latlng?.[0]
+      const lon = dta[rNuber]?.latlng?.[1]
+
+      if (lat !== undefined && lon !== undefined) {
+        const map = new Map({
+          target: mapRef.current,
+          layers: [
+            new TileLayer({
+              source: new OSM(),
+            }),
+          ],
+          view: new View({
+            center: [lon, lat],
+            zoom: 6,
+          }),
+        })
+
+        if (overlayRef.current) {
+          const overlayElement = overlayRef.current
+          overlayElement.style.position = 'absolute'
+          overlayElement.style.backgroundColor = 'white'
+          overlayElement.style.padding = '5px'
+          overlayElement.style.borderRadius = '5px'
+          overlayElement.innerHTML = dta[rNuber]?.translations.por.official
+
+          const overlay = new Overlay({
+            element: overlayElement,
+            position: [lon, lat],
+            positioning: 'top-center',
+            stopEvent: false,
+          })
+          map.addOverlay(overlay)
+        }
+      }
+    }
+  }, [dta, rNuber])
+  console.log(dta[rNuber])
   let obj = { aqui: '' }
   if (dta[rNuber]?.languages) {
     obj = dta[rNuber].languages
@@ -42,24 +84,38 @@ export default function Home() {
   const arr = obj
     ? Object.keys(obj).map((key) => ({ key, value: obj[key] }))
     : []
-
-  console.log(dta[rNuber]?.independent)
-
   return (
     <>
-      <p>{dta[rNuber]?.name.common}</p>
-      <p>{dta[rNuber]?.independent ? 'sim' : 'nao'}</p>
-      <h1>{dta[rNuber]?.region}</h1>
-      <h1>{dta[rNuber]?.subregion}</h1>
-      <h1>{arr[0].value}</h1>
-      <h1>{dta[rNuber]?.population}</h1>
-      <h1>{dta[rNuber]?.fifa}</h1>
-      <h1>{dta[rNuber]?.car.side}</h1>
-      <h1>{dta[rNuber]?.timezones[0]}</h1>
-      <img src={`${dta[rNuber]?.flags.png}`} />
-      {/* <h1>{dta[rNuber]?.flags.png}</h1> */}
-      <img src={`${dta[rNuber]?.coatOfArms.png}`} />
-      {/* <h1>{dta[rNuber]?.coatOfArms.png}</h1> */}
+      <div ref={mapRef} className="map-container"></div>
+      <div ref={overlayRef} className="map-overlay"></div>
+      <p>Nome comun: {dta[rNuber]?.translations.por.common}</p>
+      <p>Nome Oficial: {dta[rNuber]?.translations.por.official}</p>
+      {/* <p>{dta[rNuber]?.name?.common}</p> */}
+      <p>Independente: {dta[rNuber]?.independent ? 'sim' : 'não'}</p>
+      <p>Região: {dta[rNuber]?.region}</p>
+      <p>Sub Região: {dta[rNuber]?.subregion}</p>
+      <div>
+        <p>Lingua: </p>
+        {arr.map((l, index) => {
+          return <p key={index}>*{l.value}</p>
+        })}
+      </div>
+      <p>População: {dta[rNuber]?.population}</p>
+      <p>Sigla FIFA: {dta[rNuber]?.fifa}</p>
+      <p>
+        Carros na:{' '}
+        {dta[rNuber]?.car?.side === 'right' ? 'Mão francesa' : 'Mão inglesa'}
+      </p>
+      <div>
+        <p>horaros(UTC): </p>
+        {dta[rNuber]?.timezones.map((time, index) => {
+          return <p key={index}>*{time}</p>
+        })}
+      </div>
+      <img src={dta[rNuber]?.flags?.png} alt="Flag" />
+      <img src={dta[rNuber]?.coatOfArms?.png} alt="Coat of Arms" />
     </>
   )
 }
+
+export default MapComponent
