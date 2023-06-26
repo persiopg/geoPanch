@@ -10,8 +10,7 @@ import View from 'ol/View'
 import TileLayer from 'ol/layer/Tile'
 import { useGeographic } from 'ol/proj'
 import OSM from 'ol/source/OSM'
-import { FC, useEffect, useRef, useState } from 'react'
-import './globals.css'
+import { useEffect, useRef, useState } from 'react'
 
 const style = {
   position: 'absolute',
@@ -26,10 +25,11 @@ const style = {
   p: 4,
 }
 
-const MapComponent: FC = () => {
+const GamePage = () => {
   const mapRef = useRef<HTMLDivElement>(null)
   const overlayRef = useRef<HTMLDivElement>(null)
   const [dta, setDta] = useState<any | null>({})
+  const [nomes, setNomes] = useState<any | null>('')
   const [rNuber, setRNuber] = useState<Number | any>(0)
   const [open, setOpen] = useState(false)
 
@@ -39,18 +39,23 @@ const MapComponent: FC = () => {
 
   const handleClose = () => {
     setOpen(false)
+    setRNuber(getRandomNumber())
   }
 
   const fetchData = async () => {
     try {
+      const nomesAux: any = []
       const response = await axios.get('https://restcountries.com/v3.1/all')
       const data = response.data
+      data.map((i: any) => nomesAux.push(i.translations.por.common))
+
+      setNomes(nomesAux)
       setDta(data)
     } catch (error) {
       console.error(error)
     }
   }
-
+  console.log(nomes)
   useEffect(() => {
     fetchData()
     setRNuber(getRandomNumber())
@@ -63,6 +68,7 @@ const MapComponent: FC = () => {
     if (open) {
       createMap()
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open])
 
   function getRandomNumber() {
@@ -116,13 +122,13 @@ const MapComponent: FC = () => {
   if (dta[rNuber]?.languages) {
     obj = dta[rNuber].languages
   }
-
+  console.log(dta[rNuber])
   const arr = obj
     ? Object.keys(obj).map((key: string | any) => ({ key, value: obj[key] }))
     : []
 
   return (
-    <Box>
+    <Box sx={{ padding: 5, bgcolor: 'gray' }}>
       <Grid container spacing={2} className="map-component">
         <Grid item xs={12}>
           <Typography variant="body1">
@@ -132,6 +138,14 @@ const MapComponent: FC = () => {
         <Grid item xs={12}>
           <Typography variant="body1">
             Nome Oficial: {dta[rNuber]?.translations.por.official}
+          </Typography>
+        </Grid>
+        <Grid item xs={12}>
+          <Typography variant="body1">area : {dta[rNuber]?.area}</Typography>
+        </Grid>
+        <Grid item xs={12}>
+          <Typography variant="body1">
+            capital: {dta[rNuber]?.capital[0]}
           </Typography>
         </Grid>
         <Grid item xs={12}>
@@ -201,6 +215,11 @@ const MapComponent: FC = () => {
           <Box sx={style}>
             <Grid container spacing={2} className="map-component">
               <Grid item xs={12}>
+                <Typography variant="body1">
+                  {dta[rNuber]?.translations.por.common}
+                </Typography>
+              </Grid>
+              <Grid item xs={12}>
                 <div ref={mapRef} className="map-container"></div>
                 <div ref={overlayRef} className="map-overlay"></div>
               </Grid>
@@ -212,4 +231,4 @@ const MapComponent: FC = () => {
   )
 }
 
-export default MapComponent
+export default GamePage
