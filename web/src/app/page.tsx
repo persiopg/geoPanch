@@ -1,4 +1,8 @@
+/* eslint-disable @next/next/no-img-element */
 'use client'
+import { Button, Grid, Typography } from '@mui/material'
+import Box from '@mui/material/Box'
+import Modal from '@mui/material/Modal'
 import axios from 'axios'
 import Map from 'ol/Map'
 import Overlay from 'ol/Overlay'
@@ -6,13 +10,33 @@ import View from 'ol/View'
 import TileLayer from 'ol/layer/Tile'
 import { useGeographic } from 'ol/proj'
 import OSM from 'ol/source/OSM'
-import { FC, useEffect, useRef, useState } from 'react'
+import React, { FC, useEffect, useRef, useState } from 'react'
+
+const style = {
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: 600,
+  height: 600,
+  bgcolor: 'background.paper',
+  border: '2px solid #000',
+  boxShadow: 24,
+  p: 4,
+}
 
 const MapComponent: FC = () => {
   const mapRef = useRef<HTMLDivElement>(null)
   const overlayRef = useRef<HTMLDivElement>(null)
   const [dta, setDta] = useState<any | null>({})
   const [rNuber, setRNuber] = useState<Number | any>(0)
+  const [open, setOpen] = React.useState(false)
+  const handleOpen = () => {
+    setOpen(true)
+  }
+  const handleClose = () => {
+    setOpen(false)
+  }
 
   const fetchData = async () => {
     try {
@@ -75,7 +99,7 @@ const MapComponent: FC = () => {
         }
       }
     }
-  }, [dta, rNuber])
+  }, [dta, rNuber, open])
   let obj = ''
   if (dta[rNuber]?.languages) {
     obj = dta[rNuber].languages
@@ -85,52 +109,92 @@ const MapComponent: FC = () => {
     ? Object.keys(obj).map((key: string | any) => ({ key, value: obj[key] }))
     : []
   return (
-    <>
-      <div ref={mapRef} className="map-container"></div>
-      <div ref={overlayRef} className="map-overlay"></div>
-      <p>Nome comun: {dta[rNuber]?.translations.por.common}</p>
-      <p>Nome Oficial: {dta[rNuber]?.translations.por.official}</p>
-      {/* <p>{dta[rNuber]?.name?.common}</p> */}
-      <p>Independente: {dta[rNuber]?.independent ? 'sim' : 'não'}</p>
-      <p>Região: {dta[rNuber]?.region}</p>
-      <p>Sub Região: {dta[rNuber]?.subregion}</p>
-      <div>
-        <p>Lingua: </p>
-        {arr.map((l, index) => {
-          return <p key={index}>*{l.value}</p>
-        })}
-      </div>
-      <p>População: {dta[rNuber]?.population}</p>
-      <p>Sigla FIFA: {dta[rNuber]?.fifa}</p>
-      <p>
-        Carros na:{' '}
-        {dta[rNuber]?.car?.side === 'right' ? 'Mão francesa' : 'Mão inglesa'}
-      </p>
-      <div>
-        <p>horaros(UTC): </p>
-        {dta[rNuber]?.timezones.map((time: string, index: string) => {
-          return <p key={index}>*{time}</p>
-        })}
-      </div>
-      {/* <Image
-        src={dta[rNuber]?.flags?.png}
-        alt="Flag"
-        width={300}
-        height={300}
-      />
-      <Image
-        src={dta[rNuber]?.coatOfArms?.png}
-        alt="Coat of Arms"
-        width={300}
-        height={300}
-      /> */}
-      <img className="img" src={dta[rNuber]?.flags?.png} alt="Flag" />
-      <img
-        className="img"
-        src={dta[rNuber]?.coatOfArms?.png}
-        alt="Coat of Arms"
-      />
-    </>
+    <Grid container spacing={2} className="map-component">
+      <Grid item xs={12}>
+        <Typography variant="body1">
+          Nome comun: {dta[rNuber]?.translations.por.common}
+        </Typography>
+      </Grid>
+      <Grid item xs={12}>
+        <Typography variant="body1">
+          Nome Oficial: {dta[rNuber]?.translations.por.official}
+        </Typography>
+      </Grid>
+      <Grid item xs={12}>
+        <Typography variant="body1">
+          Independente: {dta[rNuber]?.independent ? 'sim' : 'não'}
+        </Typography>
+      </Grid>
+      <Grid item xs={12}>
+        <Typography variant="body1">Região: {dta[rNuber]?.region}</Typography>
+      </Grid>
+      <Grid item xs={12}>
+        <Typography variant="body1">
+          Sub Região: {dta[rNuber]?.subregion}
+        </Typography>
+      </Grid>
+      <Grid item xs={12}>
+        <Typography variant="body1">Lingua:</Typography>
+        <ul>
+          {arr.map((l, index) => (
+            <li key={index}>{l.value}</li>
+          ))}
+        </ul>
+      </Grid>
+      <Grid item xs={12}>
+        <Typography variant="body1">
+          População: {dta[rNuber]?.population}
+        </Typography>
+      </Grid>
+      <Grid item xs={12}>
+        <Typography variant="body1">Sigla FIFA: {dta[rNuber]?.fifa}</Typography>
+      </Grid>
+      <Grid item xs={12}>
+        <Typography variant="body1">
+          Carros na:{' '}
+          {dta[rNuber]?.car?.side === 'right' ? 'Mão francesa' : 'Mão inglesa'}
+        </Typography>
+      </Grid>
+      <Grid item xs={12}>
+        <Typography variant="body1">Horários (UTC):</Typography>
+        <ul>
+          {dta[rNuber]?.timezones.map((time: string, index: string) => (
+            <li key={index}>{time}</li>
+          ))}
+        </ul>
+      </Grid>
+      <Grid item xs={12}>
+        <img className="img" src={dta[rNuber]?.flags?.png} alt="Flag" />
+        <img
+          className="img"
+          src={dta[rNuber]?.coatOfArms?.png}
+          alt="Coat of Arms"
+        />
+      </Grid>
+      {/* <Grid item xs={12}>
+        <div ref={mapRef} className="map-container"></div>
+        <div ref={overlayRef} className="map-overlay"></div>
+      </Grid> */}
+      <Grid item xs={12}>
+        <div ref={mapRef} className="map-container"></div>
+        <div ref={overlayRef} className="map-overlay"></div>
+      </Grid>
+      <Grid item xs={12}>
+        <Button onClick={handleOpen}>Open modal</Button>
+      </Grid>
+
+      <Modal
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={style}>
+          <div ref={mapRef} className="map-container"></div>
+          <div ref={overlayRef} className="map-overlay"></div>
+        </Box>
+      </Modal>
+    </Grid>
   )
 }
 
