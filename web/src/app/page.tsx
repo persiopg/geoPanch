@@ -6,9 +6,9 @@ import View from 'ol/View'
 import TileLayer from 'ol/layer/Tile'
 import { useGeographic } from 'ol/proj'
 import OSM from 'ol/source/OSM'
-import { useEffect, useRef, useState } from 'react'
+import { FC, useEffect, useRef, useState } from 'react'
 
-const MapComponent: React.FC = () => {
+const MapComponent: FC = () => {
   const mapRef = useRef<HTMLDivElement>(null)
   const overlayRef = useRef<HTMLDivElement>(null)
   const [dta, setDta] = useState<any | null>({})
@@ -36,6 +36,7 @@ const MapComponent: React.FC = () => {
   }
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/rules-of-hooks
     useGeographic()
 
     if (mapRef.current) {
@@ -52,7 +53,7 @@ const MapComponent: React.FC = () => {
           ],
           view: new View({
             center: [lon, lat],
-            zoom: 6,
+            zoom: 4,
           }),
         })
 
@@ -81,7 +82,7 @@ const MapComponent: React.FC = () => {
   }
 
   const arr = obj
-    ? Object.keys(obj).map((key: string) => ({ key, value: obj[key] }))
+    ? Object.keys(obj).map((key: string | any) => ({ key, value: obj[key] }))
     : []
   return (
     <>
