@@ -46,10 +46,6 @@ const GamePage = () => {
   const [contDicas, setContDicas] = useState<number>(-1)
   const [arraydica, setArraydica] = useState<any>([])
 
-  const handleOpen = () => {
-    setOpen(true)
-  }
-
   const handleClose = () => {
     setOpen(false)
     setRNuber(getRandomNumber())

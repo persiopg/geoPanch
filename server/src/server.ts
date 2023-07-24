@@ -8,6 +8,22 @@ app.get('/', async () => {
   const users = await prisma.user.findMany()
   return users
 })
+app.get('/pontos', async () => {
+  const pontos = await prisma.pontos.findMany()
+  return pontos
+})
+app.get('/user', async () => {
+  const users = await prisma.user.findMany({
+    where: { nome: 'persio' },
+  })
+  return users
+})
+app.get('/userPontos', async () => {
+  const users = await prisma.pontos.findMany({
+    where: { userId: '13c6624c-852c-4168-9e1f-27b77914e311' },
+  })
+  return users
+})
 
 app
   .listen({
