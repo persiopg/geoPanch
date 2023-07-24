@@ -11,11 +11,11 @@ import {
   InputLabel,
   OutlinedInput,
   TextField,
-  Typography,
-  styled,
+  styled
 } from '@mui/material'
 import * as React from 'react'
 import { useState } from 'react'
+import Logo from '../../components/logaPanch'
 
 const ColorButton = styled(Button)(({ theme }) => ({
   color: theme.palette.getContrastText('#7D00FF'),
@@ -53,6 +53,7 @@ const Home = () => {
         bgcolor: '#8A19FF',
       }}
     >
+      <Logo />
       <Grid
         container
         spacing={0}
@@ -66,15 +67,6 @@ const Home = () => {
           p: 5,
         }}
       >
-        <Grid item xs={12}>
-          <Typography
-            variant="body1"
-            color={'#FF580D'}
-            sx={{ fontWeight: 'bold', fontSize: '24px' }}
-          >
-            Geo Panch
-          </Typography>
-        </Grid>
         <Grid item xs={12}>
           <TextField
             id="outlined-basic"

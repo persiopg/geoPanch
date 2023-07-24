@@ -11,12 +11,12 @@ import {
   InputLabel,
   OutlinedInput,
   TextField,
-  Typography,
   styled,
 } from '@mui/material'
 import Link from 'next/link'
 import * as React from 'react'
 import { useState } from 'react'
+import Logo from '../../components/logaPanch'
 
 const ColorButton = styled(Button)(({ theme }) => ({
   color: theme.palette.getContrastText('#7D00FF'),
@@ -28,7 +28,7 @@ const ColorButton = styled(Button)(({ theme }) => ({
 
 const Home = () => {
   const [email, setEmail] = useState<String>('')
-  const [senha, setSenha] = useState<String>('')
+  const [senha, setSenha] = useState<String | EventTarget>('')
   const [showPassword, setShowPassword] = useState(false)
 
   const handleClickShowPassword = () => setShowPassword((show) => !show)
@@ -41,17 +41,21 @@ const Home = () => {
   function verificar() {
     alert(`${email}  ${senha}`)
   }
+
   return (
     <Box
       sx={{
-        width: '100vw',
-        height: '100vh',
+        width: '100%',
+        height: '100%',
+        minHeight: '100vh',
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
         bgcolor: '#8A19FF',
+        flexDirection: 'column',
       }}
     >
+      <Logo />
       <Grid
         container
         rowSpacing={2}
@@ -64,16 +68,6 @@ const Home = () => {
           p: 5,
         }}
       >
-        <Grid item xs={12}>
-          <Typography
-            variant="body1"
-            color={'#FF580D'}
-            sx={{ fontWeight: 'bold', fontSize: '24px' }}
-          >
-            Geo Panch
-          </Typography>
-          <Link href="/game">test</Link>
-        </Grid>
         <Grid item xs={12}>
           <TextField
             id="outlined-basic"

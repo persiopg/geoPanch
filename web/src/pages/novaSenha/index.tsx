@@ -2,6 +2,7 @@
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
 import { Box, Grid, Typography } from '@mui/material'
 import Link from 'next/link'
+import Logo from '../../components/logaPanch'
 
 const NovaSenha = () => {
   return (
@@ -15,6 +16,7 @@ const NovaSenha = () => {
         bgcolor: '#8A19FF',
       }}
     >
+      <Logo />
       <Grid
         container
         spacing={0}
@@ -28,7 +30,7 @@ const NovaSenha = () => {
         }}
       >
         <Grid item xs={12}>
-          <Link href="/">
+          <Link href="/acessar">
             <Box
               sx={{
                 display: 'flex',
@@ -42,7 +44,22 @@ const NovaSenha = () => {
             </Box>
           </Link>
         </Grid>
-        <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'center' }}>
+        <Grid
+          item
+          xs={12}
+          sx={{
+            display: 'flex',
+            justifyContent: 'center',
+            ':hover': {
+              transform: 'rotate(360deg)',
+              transition: 'all 5s',
+            },
+            '::before': {
+              transform: 'rotate(-360deg)',
+              transition: 'all 12s',
+            },
+          }}
+        >
           <Typography
             variant="h1"
             color={'#FF580D'}

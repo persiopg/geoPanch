@@ -11,7 +11,9 @@ import TileLayer from 'ol/layer/Tile'
 import { useGeographic } from 'ol/proj'
 import OSM from 'ol/source/OSM'
 import { useEffect, useRef, useState } from 'react'
+import LogoPanch from '../../components/logaPanch'
 
+import { useRouter } from 'next/router'
 const style = {
   position: 'absolute',
   top: '50%',
@@ -33,13 +35,16 @@ const ColorButton = styled(Button)(({ theme }) => ({
 }))
 
 const GamePage = () => {
+  const { query } = useRouter()
   const mapRef = useRef<HTMLDivElement>(null)
   const overlayRef = useRef<HTMLDivElement>(null)
   const [dta, setDta] = useState<any | null>({})
   const [rNuber, setRNuber] = useState<Number | any>(0)
   const [open, setOpen] = useState(false)
-  const [dica, setDica] = useState<any>([])
+  const [dica, setDica] = useState<Array<any>>([])
   const [seconds, setSeconds] = useState(600)
+  const [contDicas, setContDicas] = useState<number>(-1)
+  const [arraydica, setArraydica] = useState<any>([])
 
   const handleOpen = () => {
     setOpen(true)
@@ -48,6 +53,7 @@ const GamePage = () => {
   const handleClose = () => {
     setOpen(false)
     setRNuber(getRandomNumber())
+    setContDicas(-1)
   }
 
   useEffect(() => {
@@ -67,7 +73,6 @@ const GamePage = () => {
       const data = response.data
       data.map((i: any) => nomesAux.push(i.translations.por.common))
 
-      console.error(data)
       setDta(data)
     } catch (error) {
       console.error(error)
@@ -79,13 +84,16 @@ const GamePage = () => {
   useEffect(() => {
     fetchData()
     setRNuber(getRandomNumber())
-    dicas(dta[rNuber])
     // eslint-disable-next-line react-hooks/rules-of-hooks, react-hooks/exhaustive-deps
   }, [])
   useEffect(() => {
     dicas(dta[rNuber])
     // eslint-disable-next-line react-hooks/rules-of-hooks, react-hooks/exhaustive-deps
   }, [dta[rNuber]])
+  useEffect(() => {
+    renderizaDicas()
+    // eslint-disable-next-line react-hooks/rules-of-hooks, react-hooks/exhaustive-deps
+  }, [contDicas])
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/rules-of-hooks
@@ -94,10 +102,27 @@ const GamePage = () => {
     if (open) {
       createMap()
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    dicas(dta[rNuber])
     // eslint-disable-next-line react-hooks/rules-of-hooks, react-hooks/exhaustive-deps
   }, [open])
+
+  const renderizaDicas = () => {
+    const arraydica: Array<any> = []
+    console.log(contDicas)
+    console.log(dica.length)
+
+    if (contDicas !== dica.length) {
+      for (let index = 0; index <= contDicas; index++) {
+        console.log(dica)
+
+        const element = dica[index]
+        arraydica.push(element)
+      }
+      setArraydica(arraydica)
+    } else {
+      alert('voce perdeu')
+      setOpen(true)
+    }
+  }
 
   function getRandomNumber() {
     const random = Math.random()
@@ -237,7 +262,9 @@ const GamePage = () => {
     }
     return array
   }
-
+  const checaDica = () => {
+    setContDicas(contDicas + 1)
+  }
   return (
     <Box
       sx={{
@@ -252,6 +279,7 @@ const GamePage = () => {
         m: 0,
       }}
     >
+      <LogoPanch />
       <Grid
         container
         spacing={2}
@@ -267,7 +295,7 @@ const GamePage = () => {
       >
         <Grid item xs={12}>
           <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
-            Qual é o Pais?
+            Qual é o Pais? dicas restantes: {10 - contDicas}
           </Typography>
         </Grid>
         <Grid item xs={12}>
@@ -285,6 +313,7 @@ const GamePage = () => {
           <ColorButton
             variant="contained"
             sx={{ width: '20%', height: '50px' }}
+            onClick={checaDica}
           >
             Acessar
           </ColorButton>
@@ -293,38 +322,39 @@ const GamePage = () => {
         <Grid item xs={12}>
           <Grid container>
             <Grid item xs={6}>
-              {dica.map((item: any, index: any) => {
-                return (
-                  <Grid item xs={12} key={index}>
-                    {item}
-                  </Grid>
-                )
-              })}
-              <Grid item xs={12}>
-                <Button onClick={handleOpen}>Open modal</Button>
+              <Grid container rowSpacing={3}>
+                {arraydica.map((item: any, index: any) => {
+                  return (
+                    <Grid item xs={12} key={index}>
+                      {item}
+                    </Grid>
+                  )
+                })}
               </Grid>
             </Grid>
-            <Grid item xs={6}>
-              <Grid
-                item
-                xs={12}
-                sx={{
-                  display: 'flex',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                }}
-              >
-                <Typography variant="h1">
-                  {seconds === 0 ? (
-                    <p>Cronômetro finalizado!</p>
-                  ) : (
-                    <p>{`${Math.floor(seconds / 60)}:${
-                      seconds % 60 < 10 ? '0' : ''
-                    }${seconds % 60}`}</p>
-                  )}
-                </Typography>
+            {query.time === 'true' && (
+              <Grid item xs={6}>
+                <Grid
+                  item
+                  xs={12}
+                  sx={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                  }}
+                >
+                  <Typography variant="h1">
+                    {seconds === 0 ? (
+                      <p>Cronômetro finalizado!</p>
+                    ) : (
+                      <p>{`${Math.floor(seconds / 60)}:${
+                        seconds % 60 < 10 ? '0' : ''
+                      }${seconds % 60}`}</p>
+                    )}
+                  </Typography>
+                </Grid>
               </Grid>
-            </Grid>
+            )}
           </Grid>
         </Grid>
 

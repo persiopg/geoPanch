@@ -1,143 +1,233 @@
 'use client'
-import Visibility from '@mui/icons-material/Visibility'
-import VisibilityOff from '@mui/icons-material/VisibilityOff'
-import {
-  Box,
-  Button,
-  FormControl,
-  Grid,
-  IconButton,
-  InputAdornment,
-  InputLabel,
-  OutlinedInput,
-  TextField,
-  Typography,
-  styled,
-} from '@mui/material'
+import { Box, Grid, Typography } from '@mui/material'
+import Paper from '@mui/material/Paper'
+import Table from '@mui/material/Table'
+import TableBody from '@mui/material/TableBody'
+import TableCell from '@mui/material/TableCell'
+import TableContainer from '@mui/material/TableContainer'
+import TableHead from '@mui/material/TableHead'
+import TableRow from '@mui/material/TableRow'
 import Link from 'next/link'
-import * as React from 'react'
-import { useState } from 'react'
+import Logo from '../components/logaPanch'
 
-const ColorButton = styled(Button)(({ theme }) => ({
-  color: theme.palette.getContrastText('#7D00FF'),
-  backgroundColor: '#7D00FF',
-  '&:hover': {
-    backgroundColor: '#5800B3',
-  },
-}))
+// const ColorButton = styled(Button)(({ theme }) => ({
+//   color: theme.palette.getContrastText('#7D00FF'),
+//   backgroundColor: '#7D00FF',
+//   '&:hover': {
+//     backgroundColor: '#5800B3',
+//   },
+// }))
+
+function createData(name: string, pontos: number) {
+  return { name, pontos }
+}
+
+const rows = [
+  createData('Frozen yoghurt', 159),
+  createData('Ice cream sandwich', 237),
+  createData('Eclair', 262),
+  createData('Cupcake', 305),
+  createData('Gingerbread', 356),
+  createData('Frozen yoghurt', 159),
+  createData('Ice cream sandwich', 237),
+  createData('Eclair', 262),
+  createData('Cupcake', 305),
+  createData('Gingerbread', 356),
+  createData('Frozen yoghurt', 159),
+  createData('Ice cream sandwich', 237),
+  createData('Eclair', 262),
+  createData('Cupcake', 305),
+  createData('Gingerbread', 356),
+]
 
 const Home = () => {
-  const [email, setEmail] = useState<String>('')
-  const [senha, setSenha] = useState<String>('')
-  const [showPassword, setShowPassword] = useState(false)
+  // const [email, setEmail] = useState<String>('')
+  // const [senha, setSenha] = useState<String>('')
+  // const [showPassword, setShowPassword] = useState(false)
 
-  const handleClickShowPassword = () => setShowPassword((show) => !show)
+  // const handleClickShowPassword = () => setShowPassword((show) => !show)
 
-  const handleMouseDownPassword = (
-    event: React.MouseEvent<HTMLButtonElement>,
-  ) => {
-    event.preventDefault()
-  }
-  function verificar() {
-    alert(`${email}  ${senha}`)
-  }
+  // const handleMouseDownPassword = (
+  //   event: React.MouseEvent<HTMLButtonElement>,
+  // ) => {
+  //   event.preventDefault()
+  // }
+  // function verificar() {
+  //   alert(`${email}  ${senha}`)
+  // }
   return (
     <Box
       sx={{
-        width: '100vw',
-        height: '100vh',
+        width: '100%',
+        minHeight: '100vh',
+        height: '100%',
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
         bgcolor: '#8A19FF',
+        p: 0,
+        m: 0,
       }}
     >
       <Grid
         container
         rowSpacing={2}
+        columnSpacing={2}
         className="map-component"
         sx={{
           bgcolor: 'yellow',
           height: 'max-content',
-          width: '350px',
+          width: '90%',
           borderRadius: '12px',
-          p: 5,
+          m: 5,
+          p: 2,
         }}
       >
         <Grid item xs={12}>
+          <Logo />
+        </Grid>
+        <Grid item xs={4}>
           <Typography
-            variant="body1"
+            variant="h5"
             color={'#FF580D'}
-            sx={{ fontWeight: 'bold', fontSize: '24px' }}
+            sx={{ textAlign: 'center', fontWeight: 'bold' }}
           >
-            Geo Panch
+            Modo normal
           </Typography>
-          <Link href="/game">test</Link>
+          <TableContainer component={Paper}>
+            <Table sx={{ width: '100%' }} aria-label="simple table">
+              <TableHead>
+                <TableRow>
+                  <TableCell>Jogador</TableCell>
+                  <TableCell align="left">Pontos</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {rows.map((row: any, i: number) => {
+                  if (i < 10) {
+                    return (
+                      <TableRow
+                        key={row.name}
+                        sx={{
+                          '&:last-child td, &:last-child th': { border: 0 },
+                        }}
+                      >
+                        <TableCell component="th" scope="row">
+                          {row.name}
+                        </TableCell>
+                        <TableCell align="left">{row.pontos}</TableCell>
+                      </TableRow>
+                    )
+                  }
+                })}
+              </TableBody>
+            </Table>
+          </TableContainer>
         </Grid>
-        <Grid item xs={12}>
-          <TextField
-            id="outlined-basic"
-            label="E-mail"
-            variant="outlined"
-            onChange={(e) => setEmail(e.target.value)}
-            sx={{ width: '100%', bgcolor: 'white', borderRadius: '4px' }}
-          />
-        </Grid>
-        <Grid item xs={12}>
-          <FormControl
-            sx={{
-              width: '100%',
-              bgcolor: 'white',
-              borderRadius: '4px',
-            }}
-            variant="outlined"
-            onChange={(e) => setSenha(e.target.value)}
+        <Grid item xs={4}>
+          <Typography
+            variant="h5"
+            color={'#FF580D'}
+            sx={{ textAlign: 'center', fontWeight: 'bold' }}
           >
-            <InputLabel htmlFor="outlined-adornment-password">Senha</InputLabel>
-            <OutlinedInput
-              id="outlined-adornment-password"
-              type={showPassword ? 'text' : 'password'}
-              endAdornment={
-                <InputAdornment position="end">
-                  <IconButton
-                    aria-label="toggle password visibility"
-                    onClick={handleClickShowPassword}
-                    onMouseDown={handleMouseDownPassword}
-                    edge="end"
-                  >
-                    {showPassword ? <VisibilityOff /> : <Visibility />}
-                  </IconButton>
-                </InputAdornment>
-              }
-              label="Password"
-            />
-          </FormControl>
-        </Grid>
-        <Grid item xs={6}>
-          <Link href="/novaSenha">Esqueceu sua senha?</Link>
-        </Grid>
-        <Grid
-          item
-          xs={6}
-          sx={{
-            display: 'flex',
-            justifyContent: 'flex-end',
-            paddingRight: '15px',
-          }}
-        >
-          <Link href="/cadastro">Registrar</Link>
+            desafio de tempo
+          </Typography>
+          <TableContainer component={Paper}>
+            <Table sx={{ width: '100%' }} aria-label="simple table">
+              <TableHead>
+                <TableRow>
+                  <TableCell>Jogador</TableCell>
+                  <TableCell align="left">Pontos</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {rows.map((row, i) => {
+                  if (i < 10) {
+                    return (
+                      <TableRow
+                        key={row.name}
+                        sx={{
+                          '&:last-child td, &:last-child th': { border: 0 },
+                        }}
+                      >
+                        <TableCell component="th" scope="row">
+                          {row.name}
+                        </TableCell>
+                        <TableCell align="left">{row.pontos}</TableCell>
+                      </TableRow>
+                    )
+                  }
+                })}
+              </TableBody>
+            </Table>
+          </TableContainer>
         </Grid>
         <Grid
           item
-          xs={12}
+          xs={4}
           sx={{
             display: 'flex',
             justifyContent: 'center',
+            alignItems: 'center',
           }}
         >
-          <ColorButton variant="contained" onClick={verificar}>
-            Acessar
-          </ColorButton>
+          <Grid
+            container
+            rowSpacing={2}
+            className="map-component"
+            sx={{
+              bgcolor: ' #5800B3',
+              height: '90%',
+              width: '90%',
+              borderRadius: '12px',
+              p: 5,
+            }}
+          >
+            <Grid item xs={12}>
+              <Link href="/game">
+                <Box
+                  sx={{
+                    bgcolor: '#7D00FF',
+                    textDecoration: 'none',
+                    color: 'white',
+                    height: '150px',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    borderRadius: '12px',
+                    ':hover': {
+                      bgcolor: '#8A19FF',
+                      transition: 'all 0.3s ease-in-out',
+                    },
+                  }}
+                >
+                  Novo game
+                </Box>
+              </Link>
+            </Grid>
+            <Grid item xs={12}>
+              <Link href="/game?time=true">
+                <Box
+                  sx={{
+                    bgcolor: '#7D00FF',
+                    textDecoration: 'none',
+                    color: 'white',
+                    height: '150px',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    borderRadius: '12px',
+                    ':hover': {
+                      bgcolor: '#8A19FF',
+                      transition: 'all 0.3s ease-in-out',
+                    },
+                  }}
+                >
+                  Desafio contra o tempo
+                </Box>
+              </Link>
+            </Grid>
+          </Grid>
         </Grid>
       </Grid>
     </Box>
