@@ -14,7 +14,6 @@ import {
   Typography,
   styled,
 } from '@mui/material'
-import Link from 'next/link'
 import * as React from 'react'
 import { useState } from 'react'
 
@@ -25,10 +24,11 @@ const ColorButton = styled(Button)(({ theme }) => ({
     backgroundColor: '#5800B3',
   },
 }))
-
 const Home = () => {
+  const [nome, setNome] = useState<String>('')
   const [email, setEmail] = useState<String>('')
-  const [senha, setSenha] = useState<String>('')
+  const [senha, setSenha] = useState<String | EventTarget>('')
+  const [confirmarSenha, setConfirmarSenha] = useState<String>('')
   const [showPassword, setShowPassword] = useState(false)
 
   const handleClickShowPassword = () => setShowPassword((show) => !show)
@@ -39,8 +39,9 @@ const Home = () => {
     event.preventDefault()
   }
   function verificar() {
-    alert(`${email}  ${senha}`)
+    alert(`${nome} ${email} ${senha}  ${confirmarSenha}`)
   }
+
   return (
     <Box
       sx={{
@@ -54,6 +55,7 @@ const Home = () => {
     >
       <Grid
         container
+        spacing={0}
         rowSpacing={2}
         className="map-component"
         sx={{
@@ -72,7 +74,15 @@ const Home = () => {
           >
             Geo Panch
           </Typography>
-          <Link href="/game">test</Link>
+        </Grid>
+        <Grid item xs={12}>
+          <TextField
+            id="outlined-basic"
+            label="Nome"
+            variant="outlined"
+            onChange={(e) => setNome(e.target.value)}
+            sx={{ width: '100%', bgcolor: 'white', borderRadius: '4px' }}
+          />
         </Grid>
         <Grid item xs={12}>
           <TextField
@@ -113,20 +123,39 @@ const Home = () => {
             />
           </FormControl>
         </Grid>
-        <Grid item xs={6}>
-          <Link href="/novaSenha">Esqueceu sua senha?</Link>
+        <Grid item xs={12}>
+          <FormControl
+            sx={{
+              width: '100%',
+              bgcolor: 'white',
+              borderRadius: '4px',
+            }}
+            variant="outlined"
+            onChange={(e) => setConfirmarSenha(e.target.value)}
+          >
+            <InputLabel htmlFor="outlined-adornment-password">
+              Confirmar senha
+            </InputLabel>
+            <OutlinedInput
+              id="outlined-adornment-password"
+              type={showPassword ? 'text' : 'password'}
+              endAdornment={
+                <InputAdornment position="end">
+                  <IconButton
+                    aria-label="toggle password visibility"
+                    onClick={handleClickShowPassword}
+                    onMouseDown={handleMouseDownPassword}
+                    edge="end"
+                  >
+                    {showPassword ? <VisibilityOff /> : <Visibility />}
+                  </IconButton>
+                </InputAdornment>
+              }
+              label="Password"
+            />
+          </FormControl>
         </Grid>
-        <Grid
-          item
-          xs={6}
-          sx={{
-            display: 'flex',
-            justifyContent: 'flex-end',
-            paddingRight: '15px',
-          }}
-        >
-          <Link href="/cadastro">Registrar</Link>
-        </Grid>
+
         <Grid
           item
           xs={12}
@@ -136,7 +165,7 @@ const Home = () => {
           }}
         >
           <ColorButton variant="contained" onClick={verificar}>
-            Acessar
+            Cadastrar
           </ColorButton>
         </Grid>
       </Grid>

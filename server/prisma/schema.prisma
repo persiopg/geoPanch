@@ -8,6 +8,16 @@ datasource db {
 }
 
 model User {
-  id   String @id @default(uuid())
-  nome String
+  id     String   @id @unique @default(uuid())
+  nome   String
+  senha  String
+  email  String
+  pontos Pontos[]
+}
+
+model Pontos {
+  id      Int    @id @default(autoincrement())
+  usuario User   @relation(fields: [userId], references: [id])
+  pontos  String
+  userId  String
 }
